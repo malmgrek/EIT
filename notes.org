@@ -1,0 +1,28 @@
+* Installing Netgen
+** 1. Clone repository
+   Clone e.g. to ~/
+   git clone https://github.com/NGSolve/netgen.git
+** 2. Install the dependencies in
+     https://ngsolve.org/docu/latest/install/installlinux.html
+     On Fedora 30
+     + mesa-libGLU-devel
+     + python3-tkinter
+     + mesa-libGL-devel
+     + tcl-devel
+     + tk-devel
+     + libXmu-devel
+     + python3-devel
+     + g++
+     + cmake
+*** TODO check that all these are needed
+** 3. CMake
+   1. Create e.g. directory ~/build/netgen
+   2. Cd to that directory
+   3. cmake -DINSTALL_DIR=/opt/netgen -DCMAKE_BUILD_TYPE=RELEASE ~/netgen
+** 4. Make
+   1. make (-j2 for 2 threads)
+   2. make install
+** 5. Environment variables
+   Consider putting the following in .bashrc
+   1. export NETGENDIR="/opt/netgen/bin"
+   2. alias netgen="/opt/netgen/bin/netgen"
