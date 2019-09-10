@@ -1,9 +1,20 @@
 
-struct FeSolver
-    
+struct ForwardSolver
+
     mesh::Mesh
     predict::Function
+    plot::Function
+    save::Function
+
+end
+
+
+struct InverseSolver
+
+    mesh::Mesh
     fit::Function
+    plot::Function
+    save::Function
 
 end
 
@@ -34,7 +45,10 @@ function Cem2dP1Smoothness(mesh)
     
     end
 
-    return FeSolver(mesh, predict, fit)
+    plot = throw(UndefRefError)
+    save = throw(UndefRefError)
+
+    return InverseSolver(mesh, fit, plot, save)
 
 end
 
@@ -48,7 +62,10 @@ Two-dimensional CEM monotonicity method fitter
 """
 function CEM2dP1Monotonicity(mesh)
 
-    predict(x...) = throw(UndefRefError)
     fit(x...) = throw(UndefRefError)
+    plot(x...) = throw(UndefRefError)
+    save(x...) = throw(UndefRefError)
+
+    return InverseSolver(mesh, fit, plot, save)
 
 end

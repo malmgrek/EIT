@@ -28,10 +28,14 @@ end
 
 
 function run_netgen(
-    geofile; volfile=nothing, netgen_exec="/opt/netgen/bin/netgen"
+    geofile; 
+    volfile=nothing, 
+    netgen="/opt/netgen/bin/netgen", 
+    meshsize="moderate"
     )
-    # TODO: Add ng_options
+    # TODO: Make tempdir & run netgen there with ng.opt & delete tempdir
     # TODO: Try to make with minimal side effects
+    # TODO: Omit output
 
     default_volfile = (
         (x -> x * ".vol") ∘ 
@@ -41,7 +45,13 @@ function run_netgen(
 
     volfile = isnothing(volfile) ? default_volfile(geofile) : volfile
     @info "Running netgen with $(geofile)"
-    run(`$(netgen_exec) -batchmode -geofile=$(geofile) -meshfile=$(volfile)`)
+    run(
+        `$(netgen) 
+         -batchmode 
+         -geofile=$(geofile) 
+         -meshfile=$(volfile)
+         -$(meshsize)`
+    )
     @info "Wrote mesh to $(volfile)"
     return volfile
 end
