@@ -28,14 +28,13 @@ end
 
 
 function run_netgen(
-    geofile; 
-    volfile=nothing, 
-    netgen="/opt/netgen/bin/netgen", 
-    meshsize="moderate"
+    geofile;
+    volfile=nothing,
+    netgen="/opt/netgen/bin/netgen",
+    meshoptions=[],
+    options=[],
+    verbose=true
     )
-    # TODO: Make tempdir & run netgen there with ng.opt & delete tempdir
-    # TODO: Try to make with minimal side effects
-    # TODO: Omit output
 
     default_volfile = (
         (x -> x * ".vol") ∘ 
@@ -43,15 +42,46 @@ function run_netgen(
         (x -> split(x, ".geo")[1])
     )
 
+    function write_ngopt()
+        open("ng.opt", "w") do io
+            write(
+                io,
+                join([
+                    ["meshoptions.$(x) $(y)" for (x, y) in meshoptions];
+                    ["options.$(x) $(y)" for (x, y) in options]
+                ], "\n")
+            )
+        end
+    end
+
     volfile = isnothing(volfile) ? default_volfile(geofile) : volfile
-    @info "Running netgen with $(geofile)"
-    run(
-        `$(netgen) 
-         -batchmode 
-         -geofile=$(geofile) 
-         -meshfile=$(volfile)
-         -$(meshsize)`
-    )
-    @info "Wrote mesh to $(volfile)"
+
+    # Creates a temporary directory
+    # Writes the option file there
+    # Runs netgen
+    # Erases the directory
+    mktempdir(
+        dir -> (
+            cd(
+                () -> (
+                    write_ngopt();
+                    out = read(
+                        `$netgen 
+                        -batchmode 
+                        -geofile=$geofile 
+                        -meshfile=$volfile `,
+                        String
+                    );
+                    @debug out;
+                    @debug (
+                        "Finished executing netgen in $(pwd()) containing" *
+                        "configs $(readdir())"
+                    );
+                ),
+                dir
+            )
+        ),
+        pwd())
+
     return volfile
 end
