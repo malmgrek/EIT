@@ -1,7 +1,11 @@
 """
 Represents a triangular/tetrahedral mesh
 
-TODO redefine
+TODO
+
+    1. Function that writes the geofiles (2d first)
+    2. As standard as possible data structure for the mesh & loader function
+    3. Visualization of the mesh
 
 """
 struct Mesh
@@ -10,20 +14,6 @@ struct Mesh
     boundary::Array{Array{Int, 1}, 1}
     domain::Array{Array{Int, 1}, 1}
     connection::Array{Array{Int, 1}, 1}
-end
-
-
-# Loads mesh from a JSON file
-function load_mesh(file)
-    dict = JSON.parsefile(file)
-    from_dict(x) = Mesh(
-            x["coordinates"],
-            x["topology"],
-            x["boundary"],
-            x["domain"],
-            x["elementConnection"]
-    )
-    return from_dict(dict)
 end
 
 
@@ -84,4 +74,20 @@ function run_netgen(
         pwd())
 
     return volfile
+end
+
+
+function write_geofile()
+    # Perhaps we don't explicitly need the geofiles.
+    # Instead, we can use temp files and compose the mesh generation with
+    # `run_netgen`
+    # Should support meshes with no electrodes.
+end
+
+
+function load_mesh()
+    # Perhaps we want a full mesh generation pipeline.
+    # On the other hand, we do need to be able to serialize meshes
+    # since can't assume that the user has netgen installed.
+    # Create a small collection of example meshes to be used.
 end
