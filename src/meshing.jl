@@ -14,6 +14,23 @@ struct Mesh
     boundary::Array{Array{Int, 1}, 1}
     domain::Array{Array{Int, 1}, 1}
     connection::Array{Array{Int, 1}, 1}
+    plot::Function
+    load::Function
+end
+
+
+function Cem2dMesh()
+    function plot()
+        # Use some appropriate plot tool
+    end
+    function load()
+        # Perhaps we want a full mesh generation pipeline.
+        # On the other hand, we do need to be able to serialize meshes
+        # since can't assume that the user has netgen installed.
+        # Create a small collection of example meshes to be used.
+        return Mesh()
+    end
+    return Mesh(...)
 end
 
 
@@ -82,12 +99,4 @@ function write_geofile()
     # Instead, we can use temp files and compose the mesh generation with
     # `run_netgen`
     # Should support meshes with no electrodes.
-end
-
-
-function load_mesh()
-    # Perhaps we want a full mesh generation pipeline.
-    # On the other hand, we do need to be able to serialize meshes
-    # since can't assume that the user has netgen installed.
-    # Create a small collection of example meshes to be used.
 end
