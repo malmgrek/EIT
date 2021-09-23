@@ -1,4 +1,4 @@
-module EIT
+module ImpedanceTomography
 
 using LinearAlgebra
 
@@ -14,9 +14,9 @@ TODO
 
 """
 
-include("geometry.jl")
-include("meshing.jl")
-include("models.jl")
+include("Geometry.jl")
+include("Meshing.jl")
+include("Models.jl")
 # include("fem3d/complete.jl")
 
 
