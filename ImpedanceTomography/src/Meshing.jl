@@ -1,5 +1,6 @@
 """Mesh generation for finite element method """
 
+
 @doc """
 Represents a triangular/tetrahedral mesh
 
@@ -8,14 +9,24 @@ TODO: 1. Function that writes the geofiles (2d first)
       3. Visualization of the mesh
 
 """
-struct Mesh
-    coordinates::Array{Array{Real, 1}, 1}
-    topology::Array{Array{Int, 1}, 1}
-    boundary::Array{Array{Int, 1}, 1}
-    domain::Array{Array{Int, 1}, 1}
-    connection::Array{Array{Int, 1}, 1}
+struct FemMesh
+    # Vertex coordinates
+    vertex_coordinates::Array{Real}
+    # Triangles as vertex indices
+    triangle_topology::Array{Int}
+    # Binary indicator
+    triangle_on_boundary::Array{Int, 1}
+    # Boundary subdomain index
+    triangle_boundary_domain::Array{Int, 1}
+    # Interior subdomain
+    triangle_domain::Array{Int, 1}
+    # Which triangles vertives belong to
+    vertex_triangle_connection::Array{Array{Int, 1}}
+    # Boundaries of subdomains that live on boundary
+    boundary_domain_boundary::Array{Array{Int, 1}}
     plot::Function
     load::Function
+    save::Function
 end
 
 
@@ -32,6 +43,7 @@ end
 #     end
 #     return Mesh(...)
 # end
+
 
 @doc """
 Write contents to a Netgen option file
@@ -90,7 +102,7 @@ end
 @doc """
 Create a geofile for a two-dimensional EIT model
 """
-function write_geofile2d()
+function write_geofile2d(boundary, electrodes)
     # Perhaps we don't explicitly need the geofiles.
     # Instead, we can use temp files and compose the mesh generation with
     # `run_netgen`
