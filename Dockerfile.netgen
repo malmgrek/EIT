@@ -1,0 +1,34 @@
+FROM phusion/baseimage:focal-1.0.0
+MAINTAINER Stratos Staboulis <stratos.staboulis@gmail.com>
+
+# Use baseimage docker's init system
+CMD ["/sbin/my_init"]
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get -y install \
+    git \
+    libxmu-dev \
+    # Requires g++ 10 or later
+    g++-10 \
+    tk-dev \
+    tcl-dev \
+    libglu1-mesa-dev \
+    cmake \
+    python3-tk \
+    python3-pip \
+    libpython3-dev
+
+# Installation requires cloning full depth repo because of dependency on .git.
+# I have forked a version to improve reproducibility. The original repository
+# is https://github.com/NGSolve/netgen.git.
+RUN git clone https://github.com/malmgrek/netgen.git /tmp/netgen
+RUN mkdir /tmp/ng-build && \
+    cd /tmp/ng-build && \
+    CXX=g++-10 cmake \
+    -DCMAKE_INSTALL_PREFIX=/opt/netgen \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_STUB_FILES=OFF /tmp/netgen && \
+    make && make install
+# Clean up
+RUN cd /tmp && rm netgen ng-build -rf
